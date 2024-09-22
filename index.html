@@ -237,13 +237,12 @@
         });
 
         document.getElementById('upload-drawing-btn').addEventListener('click', async () => {
-    canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append('file', blob, 'drawing.png');
-
-        const response = await fetch(`${ngrokUrl}/upload/`, {
-            method: 'POST',
-            body: formData
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append('file', blob, 'drawing.png');
+                const response = await fetch(`${ngrokUrl}/upload/`, {
+                    method: 'POST',
+                    body: formData
         });
 
         const result = await response.json();
@@ -258,8 +257,7 @@
 
             document.getElementById('download-link').href = result.audio_file;
             document.getElementById('download-link').style.display = 'block';
-        }
-    }, 'image/png');
+        }}, 'image/png');
 
 
         });
