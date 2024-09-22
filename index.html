@@ -23,15 +23,77 @@
             max-width: 800px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
-        h1 { font-size: 36px; margin-bottom: 10px; color: #222; }
-        h2 { font-size: 28px; margin-top: 0; color: #007ACC; }
-        canvas { border: 2px solid #333; margin: 20px auto; display: block; background-color: white; border-radius: 5px; }
-        .pen-settings { display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
-        button { padding: 10px 20px; font-size: 16px; margin: 10px; background-color: #007ACC; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background-color: #005a99; }
-        audio { margin-top: 20px; }
-        footer { margin-top: 20px; font-size: 14px; color: #555; }
-        a.download-link { display: block; margin-top: 10px; color: #007ACC; text-decoration: none; }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #222;
+        }
+        h2 {
+            font-size: 28px;
+            margin-top: 0;
+            color: #007ACC;
+        }
+        canvas {
+            border: 2px solid #333;
+            margin: 20px auto;
+            display: block;
+            background-color: white;
+            border-radius: 5px;
+        }
+        .pen-settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .pen-settings label {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .pen-settings select, .pen-settings input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            background-color: #007ACC;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005a99;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .action-buttons button {
+            margin: 0 10px;
+        }
+        #recognized-text {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        audio {
+            margin-top: 20px;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        a.download-link {
+            display: block;
+            margin-top: 10px;
+            color: #007ACC;
+            text-decoration: none;
+        }
     </style>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
 </head>
@@ -44,14 +106,16 @@
         <div class="action-buttons">
             <button id="draw-btn">Draw on Trackpad</button>
             <button id="upload-file-btn">Upload an Image File</button>
-            <button id="camera-btn">Capture from Back Camera</button>
+            <button id="camera-btn">Capture from Camera</button>
             <button id="back-btn">Back</button>
         </div>
 
         <canvas id="trackpad" width="400" height="400" style="display:none;"></canvas>
+
         <div class="pen-settings" style="display:none;">
             <label for="pen-thickness">Pen Thickness:</label>
             <input type="number" id="pen-thickness" value="5" min="1" max="20" />
+            
             <label for="pen-type">Pen Type:</label>
             <select id="pen-type">
                 <option value="round">Round</option>
@@ -60,9 +124,11 @@
         </div>
 
         <input type="file" id="file-input" accept="image/png, image/jpeg" style="display:none;"/>
+
         <div id="control-buttons" style="display:none;">
             <button id="clear-btn">Clear</button>
             <button id="upload-drawing-btn">Upload Drawing</button>
+            <button id="save-drawing-btn">Save Drawing</button>
         </div>
 
         <video id="camera-video" width="400" height="300" autoplay style="display:none;"></video>
@@ -75,10 +141,13 @@
         <audio id="audio-player" controls style="display:none;"></audio>
         <a id="download-link" class="download-link" href="#" download style="display:none;">Download Audio</a>
 
-        <footer>© Saswata Kumar Dash 2024</footer>
+        <footer>
+            © Saswata Kumar Dash 2024
+        </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
     <script>
         const ngrokUrl = 'https://1e2b-27-5-109-128.ngrok-free.app'; // Update this to your ngrok URL
         const canvas = document.getElementById('trackpad');
@@ -89,6 +158,7 @@
 
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
         ctx.lineWidth = penThicknessInput.value;
         ctx.lineCap = penTypeSelect.value;
 
@@ -126,12 +196,26 @@
             document.getElementById('download-link').style.display = 'none';
         });
 
+        document.getElementById('save-drawing-btn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'drawing.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+
+        document.getElementById('draw-btn').addEventListener('click', () => {
+            canvas.style.display = 'block';
+            document.querySelector('.pen-settings').style.display = 'flex';
+            document.getElementById('control-buttons').style.display = 'block';
+            document.getElementById('file-input').style.display = 'none';
+        });
+
         document.getElementById('upload-drawing-btn').addEventListener('click', async () => {
             canvas.toBlob(async (blob) => {
                 const formData = new FormData();
                 formData.append('file', blob, 'drawing.png');
 
-                const response = await fetch(`${ngrokUrl}/upload/`, {
+                const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
                     method: 'POST',
                     body: formData
                 });
@@ -142,7 +226,6 @@
                     document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
                     document.getElementById('audio-player').src = result.audio_file;
                     document.getElementById('audio-player').style.display = 'block';
-                    document.getElementById('audio-player').play();  // Auto-play audio
                     document.getElementById('download-link').href = result.audio_file;
                     document.getElementById('download-link').style.display = 'block';
                 }
@@ -163,7 +246,7 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await fetch(`${ngrokUrl}/upload/`, {
+            const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
                 method: 'POST',
                 body: formData
             });
@@ -174,7 +257,6 @@
                 document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
                 document.getElementById('audio-player').src = result.audio_file;
                 document.getElementById('audio-player').style.display = 'block';
-                document.getElementById('audio-player').play();  // Auto-play audio
                 document.getElementById('download-link').href = result.audio_file;
                 document.getElementById('download-link').style.display = 'block';
             }
@@ -183,19 +265,25 @@
         const video = document.getElementById('camera-video');
         const captureBtn = document.getElementById('capture-btn');
         const cropBtn = document.getElementById('crop-btn');
+        const saveCroppedBtn = document.createElement('button');
+        saveCroppedBtn.innerText = 'Save Cropped Image';
+        saveCroppedBtn.style.display = 'none';
+        document.body.appendChild(saveCroppedBtn);
+
+        const cameraBtn = document.getElementById('camera-btn');
+        const capturedImage = document.getElementById('captured-image');
         const clearCaptureBtn = document.getElementById('clear-capture-btn');
         let cropper;
 
-        document.getElementById('camera-btn').addEventListener('click', async () => {
+        cameraBtn.addEventListener('click', async () => {
             video.style.display = 'block';
             captureBtn.style.display = 'block';
 
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); // Use back camera
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
                 video.srcObject = stream;
             } catch (err) {
                 console.error("Error accessing camera: ", err);
-                alert("Unable to access camera. Please check your permissions.");
             }
         });
 
@@ -204,44 +292,33 @@
             canvasCapture.width = video.videoWidth;
             canvasCapture.height = video.videoHeight;
             const ctxCapture = canvasCapture.getContext('2d');
-            ctxCapture.drawImage(video, 0, 0, canvasCapture.width, canvasCapture.height);
+            ctxCapture.drawImage(video, 0, 0);
 
-            const img = document.getElementById('captured-image');
-            img.src = canvasCapture.toDataURL('image/png');
-            img.style.display = 'block';
-
-            document.getElementById('crop-btn').style.display = 'block';
+            capturedImage.src = canvasCapture.toDataURL('image/png');
+            capturedImage.style.display = 'block';
+            cropBtn.style.display = 'block';
             clearCaptureBtn.style.display = 'block';
-        });
+            saveCroppedBtn.style.display = 'none';
 
-        clearCaptureBtn.addEventListener('click', () => {
-            const img = document.getElementById('captured-image');
-            img.style.display = 'none';
-            document.getElementById('crop-btn').style.display = 'none';
-            clearCaptureBtn.style.display = 'none';
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
             video.style.display = 'none';
             captureBtn.style.display = 'none';
+
+            cropper = new Cropper(capturedImage, {
+                aspectRatio: 1,
+                viewMode: 1
+            });
         });
 
-        cropBtn.addEventListener('click', async () => {
-            const img = document.getElementById('captured-image');
-
-            // Create a new canvas to crop the image
-            const croppedCanvas = document.createElement('canvas');
-            const croppedCtx = croppedCanvas.getContext('2d');
-
-            // Set the cropped canvas size to the original image
-            croppedCanvas.width = img.width;
-            croppedCanvas.height = img.height;
-
-            // Crop the image to the canvas
-            croppedCtx.drawImage(img, 0, 0, croppedCanvas.width, croppedCanvas.height);
-
+        cropBtn.addEventListener('click', () => {
+            const croppedCanvas = cropper.getCroppedCanvas();
             croppedCanvas.toBlob(async (blob) => {
                 const formData = new FormData();
-                formData.append('file', blob, 'captured.png');
+                formData.append('file', blob, 'cropped-image.png');
 
-                const response = await fetch(`${ngrokUrl}/upload/`, {
+                const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
                     method: 'POST',
                     body: formData
                 });
@@ -252,20 +329,36 @@
                     document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
                     document.getElementById('audio-player').src = result.audio_file;
                     document.getElementById('audio-player').style.display = 'block';
-                    document.getElementById('audio-player').play();  // Auto-play audio
                     document.getElementById('download-link').href = result.audio_file;
                     document.getElementById('download-link').style.display = 'block';
                 }
+
+                saveCroppedBtn.style.display = 'block';
             }, 'image/png');
         });
 
+        saveCroppedBtn.addEventListener('click', () => {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            const link = document.createElement('a');
+            link.download = 'cropped-image.png';
+            link.href = croppedCanvas.toDataURL();
+            link.click();
+        });
+
+        clearCaptureBtn.addEventListener('click', () => {
+            capturedImage.style.display = 'none';
+            cropBtn.style.display = 'none';
+            clearCaptureBtn.style.display = 'none';
+            saveCroppedBtn.style.display = 'none';
+            document.getElementById('recognized-text').innerText = "";
+            document.getElementById('audio-player').style.display = 'none';
+            document.getElementById('download-link').style.display = 'none';
+            window.location.href = 'index.html';
+        });
+
         document.getElementById('back-btn').addEventListener('click', () => {
-            // Implement logic to navigate back, if needed
-            alert("Navigating back...");
-            // You can redirect to another page or hide/show elements
+            window.location.href = 'index.html';
         });
     </script>
 </body>
 </html>
-
-
