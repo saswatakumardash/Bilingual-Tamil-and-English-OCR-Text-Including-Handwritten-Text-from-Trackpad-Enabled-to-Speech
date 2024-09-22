@@ -236,30 +236,32 @@
             document.getElementById('file-input').click();
         });
 
-        document.getElementById('file-input').addEventListener('change', async () => {
-            const file = document.getElementById('file-input').files[0];
-            if (!file) {
-                alert("Please select a file to upload.");
-                return;
-            }
+        document.getElementById('upload-drawing-btn').addEventListener('click', async () => {
+    canvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append('file', blob, 'drawing.png');
 
-            const formData = new FormData();
-            formData.append('file', file);
+        const response = await fetch(`${ngrokUrl}/upload/`, {
+            method: 'POST',
+            body: formData
+        });
 
-            const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
-                method: 'POST',
-                body: formData
-            });
+        const result = await response.json();
 
-            const result = await response.json();
+        if (result.extracted_text) {
+            document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
 
-            if (result.extracted_text) {
-                document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
-                document.getElementById('audio-player').src = result.audio_file;
-                document.getElementById('audio-player').style.display = 'block';
-                document.getElementById('download-link').href = result.audio_file;
-                document.getElementById('download-link').style.display = 'block';
-            }
+            const audioPlayer = document.getElementById('audio-player');
+            audioPlayer.src = result.audio_file;
+            audioPlayer.style.display = 'block';
+            audioPlayer.play();  // Automatically play the audio
+
+            document.getElementById('download-link').href = result.audio_file;
+            document.getElementById('download-link').style.display = 'block';
+        }
+    }, 'image/png');
+
+
         });
 
         const video = document.getElementById('camera-video');
