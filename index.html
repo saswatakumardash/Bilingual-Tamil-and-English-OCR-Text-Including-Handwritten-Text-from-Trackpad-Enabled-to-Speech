@@ -8,7 +8,7 @@
         body {
             font-family: 'Arial', sans-serif;
             text-align: center;
-            background-image: url('background-image.jpg'); /* Placeholder for background image */
+            background-image: url('background-image.jpg');
             background-size: cover;
             background-position: center;
             color: #333;
@@ -95,7 +95,6 @@
             text-decoration: none;
         }
     </style>
-    <!-- Include Cropper.js CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
 </head>
 <body>
@@ -129,15 +128,14 @@
         <div id="control-buttons" style="display:none;">
             <button id="clear-btn">Clear</button>
             <button id="upload-drawing-btn">Upload Drawing</button>
-            <button id="save-drawing-btn">Save Drawing</button> <!-- New Save Button -->
+            <button id="save-drawing-btn">Save Drawing</button>
         </div>
 
-        <!-- Camera and Crop Functionality -->
         <video id="camera-video" width="400" height="300" autoplay style="display:none;"></video>
         <button id="capture-btn" style="display:none;">Capture Photo</button>
         <img id="captured-image" style="display:none; max-width: 100%;"/>
         <button id="crop-btn" style="display:none;">Crop & Upload</button>
-        <button id="clear-capture-btn" style="display:none;">Clear Captured Image</button> <!-- New Clear/Delete Button -->
+        <button id="clear-capture-btn" style="display:none;">Clear Captured Image</button>
 
         <p id="recognized-text"></p>
         <audio id="audio-player" controls style="display:none;"></audio>
@@ -148,10 +146,10 @@
         </footer>
     </div>
 
-    <!-- Include Cropper.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
     <script>
+        const ngrokUrl = 'https://25e6-27-5-109-128.ngrok-free.app'; // Update this to your ngrok URL
         const canvas = document.getElementById('trackpad');
         const ctx = canvas.getContext('2d');
         const penThicknessInput = document.getElementById('pen-thickness');
@@ -164,7 +162,6 @@
         ctx.lineWidth = penThicknessInput.value;
         ctx.lineCap = penTypeSelect.value;
 
-        // Update pen thickness and type
         penThicknessInput.addEventListener('input', () => {
             ctx.lineWidth = penThicknessInput.value;
         });
@@ -173,14 +170,12 @@
             ctx.lineCap = penTypeSelect.value;
         });
 
-        // Start drawing
         canvas.addEventListener('mousedown', (e) => {
             drawing = true;
             ctx.beginPath();
             ctx.moveTo(e.offsetX, e.offsetY);
         });
 
-        // Draw lines
         canvas.addEventListener('mousemove', (e) => {
             if (drawing) {
                 ctx.lineTo(e.offsetX, e.offsetY);
@@ -188,12 +183,10 @@
             }
         });
 
-        // Stop drawing
         canvas.addEventListener('mouseup', () => {
             drawing = false;
         });
 
-        // Clear canvas
         document.getElementById('clear-btn').addEventListener('click', () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "white";
@@ -203,7 +196,6 @@
             document.getElementById('download-link').style.display = 'none';
         });
 
-        // Save drawing to local file
         document.getElementById('save-drawing-btn').addEventListener('click', () => {
             const link = document.createElement('a');
             link.download = 'drawing.png';
@@ -211,7 +203,6 @@
             link.click();
         });
 
-        // Show drawing tools
         document.getElementById('draw-btn').addEventListener('click', () => {
             canvas.style.display = 'block';
             document.querySelector('.pen-settings').style.display = 'flex';
@@ -219,13 +210,12 @@
             document.getElementById('file-input').style.display = 'none';
         });
 
-        // Upload drawing as PNG to backend
         document.getElementById('upload-drawing-btn').addEventListener('click', async () => {
             canvas.toBlob(async (blob) => {
                 const formData = new FormData();
                 formData.append('file', blob, 'drawing.png');
 
-                const response = await fetch('http://127.0.0.1:8000/upload/', {
+                const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
                     method: 'POST',
                     body: formData
                 });
@@ -242,7 +232,6 @@
             }, 'image/png');
         });
 
-        // File upload functionality
         document.getElementById('upload-file-btn').addEventListener('click', () => {
             document.getElementById('file-input').click();
         });
@@ -257,7 +246,7 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await fetch('http://127.0.0.1:8000/upload/', {
+            const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
                 method: 'POST',
                 body: formData
             });
@@ -272,111 +261,106 @@
                 document.getElementById('download-link').style.display = 'block';
             }
         });
-        // Capture and crop functionality
-const video = document.getElementById('camera-video');
-const captureBtn = document.getElementById('capture-btn');
-const cropBtn = document.getElementById('crop-btn');
-const saveCroppedBtn = document.createElement('button'); // Button to save cropped image
-saveCroppedBtn.innerText = 'Save Cropped Image';
-saveCroppedBtn.style.display = 'none';
-document.body.appendChild(saveCroppedBtn); // Append it to the body or where you want
 
-const cameraBtn = document.getElementById('camera-btn');
-const capturedImage = document.getElementById('captured-image');
-const clearCaptureBtn = document.getElementById('clear-capture-btn');
-let cropper;
+        const video = document.getElementById('camera-video');
+        const captureBtn = document.getElementById('capture-btn');
+        const cropBtn = document.getElementById('crop-btn');
+        const saveCroppedBtn = document.createElement('button');
+        saveCroppedBtn.innerText = 'Save Cropped Image';
+        saveCroppedBtn.style.display = 'none';
+        document.body.appendChild(saveCroppedBtn);
 
-cameraBtn.addEventListener('click', async () => {
-    video.style.display = 'block';
-    captureBtn.style.display = 'block';
+        const cameraBtn = document.getElementById('camera-btn');
+        const capturedImage = document.getElementById('captured-image');
+        const clearCaptureBtn = document.getElementById('clear-capture-btn');
+        let cropper;
 
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        video.srcObject = stream;
-    } catch (err) {
-        console.error("Error accessing camera: ", err);
-    }
-});
+        cameraBtn.addEventListener('click', async () => {
+            video.style.display = 'block';
+            captureBtn.style.display = 'block';
 
-captureBtn.addEventListener('click', () => {
-    const canvasCapture = document.createElement('canvas');
-    canvasCapture.width = video.videoWidth;
-    canvasCapture.height = video.videoHeight;
-    const ctxCapture = canvasCapture.getContext('2d');
-    ctxCapture.drawImage(video, 0, 0);
-
-    capturedImage.src = canvasCapture.toDataURL('image/png');
-    capturedImage.style.display = 'block';
-    cropBtn.style.display = 'block';
-    clearCaptureBtn.style.display = 'block';
-    saveCroppedBtn.style.display = 'none'; // Hide save button initially
-
-    const stream = video.srcObject;
-    const tracks = stream.getTracks();
-    tracks.forEach(track => track.stop());
-    video.style.display = 'none';
-    captureBtn.style.display = 'none';
-
-    cropper = new Cropper(capturedImage, {
-        aspectRatio: 1,
-        viewMode: 1
-    });
-});
-
-cropBtn.addEventListener('click', () => {
-    const croppedCanvas = cropper.getCroppedCanvas();
-    croppedCanvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append('file', blob, 'cropped-image.png');
-
-        const response = await fetch('http://127.0.0.1:8000/upload/', {
-            method: 'POST',
-            body: formData
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+            } catch (err) {
+                console.error("Error accessing camera: ", err);
+            }
         });
 
-        const result = await response.json();
+        captureBtn.addEventListener('click', () => {
+            const canvasCapture = document.createElement('canvas');
+            canvasCapture.width = video.videoWidth;
+            canvasCapture.height = video.videoHeight;
+            const ctxCapture = canvasCapture.getContext('2d');
+            ctxCapture.drawImage(video, 0, 0);
 
-        if (result.extracted_text) {
-            document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
-            document.getElementById('audio-player').src = result.audio_file;
-            document.getElementById('audio-player').style.display = 'block';
-            document.getElementById('download-link').href = result.audio_file;
-            document.getElementById('download-link').style.display = 'block';
-        }
+            capturedImage.src = canvasCapture.toDataURL('image/png');
+            capturedImage.style.display = 'block';
+            cropBtn.style.display = 'block';
+            clearCaptureBtn.style.display = 'block';
+            saveCroppedBtn.style.display = 'none';
 
-        saveCroppedBtn.style.display = 'block'; // Show save button after cropping
-    }, 'image/png');
-});
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            video.style.display = 'none';
+            captureBtn.style.display = 'none';
 
-// Save cropped image locally
-saveCroppedBtn.addEventListener('click', () => {
-    const croppedCanvas = cropper.getCroppedCanvas();
-    const link = document.createElement('a');
-    link.download = 'cropped-image.png';
-    link.href = croppedCanvas.toDataURL();
-    link.click();
-});
+            cropper = new Cropper(capturedImage, {
+                aspectRatio: 1,
+                viewMode: 1
+            });
+        });
 
-// Clear captured image and return to homepage
-clearCaptureBtn.addEventListener('click', () => {
-    capturedImage.style.display = 'none';
-    cropBtn.style.display = 'none';
-    clearCaptureBtn.style.display = 'none';
-    saveCroppedBtn.style.display = 'none';
-    document.getElementById('recognized-text').innerText = "";
-    document.getElementById('audio-player').style.display = 'none';
-    document.getElementById('download-link').style.display = 'none';
-    window.location.href = 'index.html'; // Redirect to homepage after clearing
-});
+        cropBtn.addEventListener('click', () => {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            croppedCanvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append('file', blob, 'cropped-image.png');
 
+                const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
+                    method: 'POST',
+                    body: formData
+                });
 
-        
+                const result = await response.json();
 
-        // Back button functionality
+                if (result.extracted_text) {
+                    document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
+                    document.getElementById('audio-player').src = result.audio_file;
+                    document.getElementById('audio-player').style.display = 'block';
+                    document.getElementById('download-link').href = result.audio_file;
+                    document.getElementById('download-link').style.display = 'block';
+                }
+
+                saveCroppedBtn.style.display = 'block';
+            }, 'image/png');
+        });
+
+        saveCroppedBtn.addEventListener('click', () => {
+            const croppedCanvas = cropper.getCroppedCanvas();
+            const link = document.createElement('a');
+            link.download = 'cropped-image.png';
+            link.href = croppedCanvas.toDataURL();
+            link.click();
+        });
+
+        clearCaptureBtn.addEventListener('click', () => {
+            capturedImage.style.display = 'none';
+            cropBtn.style.display = 'none';
+            clearCaptureBtn.style.display = 'none';
+            saveCroppedBtn.style.display = 'none';
+            document.getElementById('recognized-text').innerText = "";
+            document.getElementById('audio-player').style.display = 'none';
+            document.getElementById('download-link').style.display = 'none';
+            window.location.href = 'index.html';
+        });
+
         document.getElementById('back-btn').addEventListener('click', () => {
             window.location.href = 'index.html';
         });
     </script>
 </body>
 </html>
+
 
