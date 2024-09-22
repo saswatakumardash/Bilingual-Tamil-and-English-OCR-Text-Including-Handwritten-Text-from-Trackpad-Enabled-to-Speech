@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamil Handwriting to Speech - Draw or Upload</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-image: url('background-image.jpg'); /* Placeholder for background image */
+            background-size: cover;
+            background-position: center;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            margin: 30px auto;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 800px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #222;
+        }
+        h2 {
+            font-size: 28px;
+            margin-top: 0;
+            color: #007ACC;
+        }
+        canvas {
+            border: 2px solid #333;
+            margin: 20px auto;
+            display: block;
+            background-color: white;
+            border-radius: 5px;
+        }
+        .pen-settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .pen-settings label {
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        .pen-settings select, .pen-settings input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 0 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            background-color: #007ACC;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #005a99;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .action-buttons button {
+            margin: 0 10px;
+        }
+        #recognized-text {
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        audio {
+            margin-top: 20px;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        a.download-link {
+            display: block;
+            margin-top: 10px;
+            color: #007ACC;
+            text-decoration: none;
+        }
+    </style>
+    <!-- Include Cropper.js CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
+</head>
+<body>
+    <div class="container">
+        <h1>Tamil Handwriting to Speech</h1>
+        <h2>Draw on Trackpad or Upload a File</h2>
+        
+        <p>Choose an option:</p>
+        <div class="action-buttons">
+            <button id="draw-btn">Draw on Trackpad</button>
+            <button id="upload-file-btn">Upload an Image File</button>
+            <button id="camera-btn">Capture from Camera</button>
+            <button id="back-btn">Back</button>
+        </div>
+
+        <canvas id="trackpad" width="400" height="400" style="display:none;"></canvas>
+
+        <div class="pen-settings" style="display:none;">
+            <label for="pen-thickness">Pen Thickness:</label>
+            <input type="number" id="pen-thickness" value="5" min="1" max="20" />
+            
+            <label for="pen-type">Pen Type:</label>
+            <select id="pen-type">
+                <option value="round">Round</option>
+                <option value="square">Square</option>
+            </select>
+        </div>
+
+        <input type="file" id="file-input" accept="image/png, image/jpeg" style="display:none;"/>
+
+        <div id="control-buttons" style="display:none;">
+            <button id="clear-btn">Clear</button>
+            <button id="upload-drawing-btn">Upload Drawing</button>
+            <button id="save-drawing-btn">Save Drawing</button> <!-- New Save Button -->
+        </div>
+
+        <!-- Camera and Crop Functionality -->
+        <video id="camera-video" width="400" height="300" autoplay style="display:none;"></video>
+        <button id="capture-btn" style="display:none;">Capture Photo</button>
+        <img id="captured-image" style="display:none; max-width: 100%;"/>
+        <button id="crop-btn" style="display:none;">Crop & Upload</button>
+        <button id="clear-capture-btn" style="display:none;">Clear Captured Image</button> <!-- New Clear/Delete Button -->
+
+        <p id="recognized-text"></p>
+        <audio id="audio-player" controls style="display:none;"></audio>
+        <a id="download-link" class="download-link" href="#" download style="display:none;">Download Audio</a>
+
+        <footer>
+            © Saswata Kumar Dash 2024
+        </footer>
+    </div>
+
+    <!-- Include Cropper.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+    <script>
+        const canvas = document.getElementById('trackpad');
+        const ctx = canvas.getContext('2d');
+        const penThicknessInput = document.getElementById('pen-thickness');
+        const penTypeSelect = document.getElementById('pen-type');
+        let drawing = false;
+
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.lineWidth = penThicknessInput.value;
+        ctx.lineCap = penTypeSelect.value;
+
+        // Update pen thickness and type
+        penThicknessInput.addEventListener('input', () => {
+            ctx.lineWidth = penThicknessInput.value;
+        });
+
+        penTypeSelect.addEventListener('change', () => {
+            ctx.lineCap = penTypeSelect.value;
+        });
+
+        // Start drawing
+        canvas.addEventListener('mousedown', (e) => {
+            drawing = true;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        // Draw lines
+        canvas.addEventListener('mousemove', (e) => {
+            if (drawing) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+
+        // Stop drawing
+        canvas.addEventListener('mouseup', () => {
+            drawing = false;
+        });
+
+        // Clear canvas
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            document.getElementById('recognized-text').innerText = "";
+            document.getElementById('audio-player').style.display = 'none';
+            document.getElementById('download-link').style.display = 'none';
+        });
+
+        // Save drawing to local file
+        document.getElementById('save-drawing-btn').addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.download = 'drawing.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        });
+
+        // Show drawing tools
+        document.getElementById('draw-btn').addEventListener('click', () => {
+            canvas.style.display = 'block';
+            document.querySelector('.pen-settings').style.display = 'flex';
+            document.getElementById('control-buttons').style.display = 'block';
+            document.getElementById('file-input').style.display = 'none';
+        });
+
+        // Upload drawing as PNG to backend
+        document.getElementById('upload-drawing-btn').addEventListener('click', async () => {
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append('file', blob, 'drawing.png');
+
+                const response = await fetch('http://127.0.0.1:8000/upload/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.extracted_text) {
+                    document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
+                    document.getElementById('audio-player').src = result.audio_file;
+                    document.getElementById('audio-player').style.display = 'block';
+                    document.getElementById('download-link').href = result.audio_file;
+                    document.getElementById('download-link').style.display = 'block';
+                }
+            }, 'image/png');
+        });
+
+        // File upload functionality
+        document.getElementById('upload-file-btn').addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+
+        document.getElementById('file-input').addEventListener('change', async () => {
+            const file = document.getElementById('file-input').files[0];
+            if (!file) {
+                alert("Please select a file to upload.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch('http://127.0.0.1:8000/upload/', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            if (result.extracted_text) {
+                document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
+                document.getElementById('audio-player').src = result.audio_file;
+                document.getElementById('audio-player').style.display = 'block';
+                document.getElementById('download-link').href = result.audio_file;
+                document.getElementById('download-link').style.display = 'block';
+            }
+        });
+        // Capture and crop functionality
+const video = document.getElementById('camera-video');
+const captureBtn = document.getElementById('capture-btn');
+const cropBtn = document.getElementById('crop-btn');
+const saveCroppedBtn = document.createElement('button'); // Button to save cropped image
+saveCroppedBtn.innerText = 'Save Cropped Image';
+saveCroppedBtn.style.display = 'none';
+document.body.appendChild(saveCroppedBtn); // Append it to the body or where you want
+
+const cameraBtn = document.getElementById('camera-btn');
+const capturedImage = document.getElementById('captured-image');
+const clearCaptureBtn = document.getElementById('clear-capture-btn');
+let cropper;
+
+cameraBtn.addEventListener('click', async () => {
+    video.style.display = 'block';
+    captureBtn.style.display = 'block';
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = stream;
+    } catch (err) {
+        console.error("Error accessing camera: ", err);
+    }
+});
+
+captureBtn.addEventListener('click', () => {
+    const canvasCapture = document.createElement('canvas');
+    canvasCapture.width = video.videoWidth;
+    canvasCapture.height = video.videoHeight;
+    const ctxCapture = canvasCapture.getContext('2d');
+    ctxCapture.drawImage(video, 0, 0);
+
+    capturedImage.src = canvasCapture.toDataURL('image/png');
+    capturedImage.style.display = 'block';
+    cropBtn.style.display = 'block';
+    clearCaptureBtn.style.display = 'block';
+    saveCroppedBtn.style.display = 'none'; // Hide save button initially
+
+    const stream = video.srcObject;
+    const tracks = stream.getTracks();
+    tracks.forEach(track => track.stop());
+    video.style.display = 'none';
+    captureBtn.style.display = 'none';
+
+    cropper = new Cropper(capturedImage, {
+        aspectRatio: 1,
+        viewMode: 1
+    });
+});
+
+cropBtn.addEventListener('click', () => {
+    const croppedCanvas = cropper.getCroppedCanvas();
+    croppedCanvas.toBlob(async (blob) => {
+        const formData = new FormData();
+        formData.append('file', blob, 'cropped-image.png');
+
+        const response = await fetch('http://127.0.0.1:8000/upload/', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.extracted_text) {
+            document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
+            document.getElementById('audio-player').src = result.audio_file;
+            document.getElementById('audio-player').style.display = 'block';
+            document.getElementById('download-link').href = result.audio_file;
+            document.getElementById('download-link').style.display = 'block';
+        }
+
+        saveCroppedBtn.style.display = 'block'; // Show save button after cropping
+    }, 'image/png');
+});
+
+// Save cropped image locally
+saveCroppedBtn.addEventListener('click', () => {
+    const croppedCanvas = cropper.getCroppedCanvas();
+    const link = document.createElement('a');
+    link.download = 'cropped-image.png';
+    link.href = croppedCanvas.toDataURL();
+    link.click();
+});
+
+// Clear captured image and return to homepage
+clearCaptureBtn.addEventListener('click', () => {
+    capturedImage.style.display = 'none';
+    cropBtn.style.display = 'none';
+    clearCaptureBtn.style.display = 'none';
+    saveCroppedBtn.style.display = 'none';
+    document.getElementById('recognized-text').innerText = "";
+    document.getElementById('audio-player').style.display = 'none';
+    document.getElementById('download-link').style.display = 'none';
+    window.location.href = 'index.html'; // Redirect to homepage after clearing
+});
+
+
+        
+
+        // Back button functionality
+        document.getElementById('back-btn').addEventListener('click', () => {
+            window.location.href = 'index.html';
+        });
+    </script>
+</body>
+</html>
+
