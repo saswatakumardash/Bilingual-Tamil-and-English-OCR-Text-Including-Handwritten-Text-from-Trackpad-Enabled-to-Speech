@@ -26,8 +26,8 @@ This project enables users to convert handwritten Tamil and English text, includ
 
 ### 1. Clone the Repository
 ```bash
-git clone https://github.com/your-username/your-repo-name.git
-cd your-repo-name
+git clone https://github.com/saswatakumardash/Bilingual-Tamil-and-English-OCR-Text-Including-Handwritten-Text-from-Trackpad-Enabled-to-Speech.git
+cd Bilingual-Tamil-and-English-OCR-Text-Including-Handwritten-Text-from-Trackpad-Enabled-to-Speech
 ```
 
 ### 2. Install Dependencies
@@ -70,7 +70,7 @@ You can run the frontend using Vercel or by serving the HTML files locally. If y
 
 ## Dataset
 
-The CRNN model was trained using a Tamil handwritten dataset from Kaggle. You can access the dataset from the following link:
+The CRNN model was trained using a Tamil handwritten dataset from Kaggle and English Dataset([English Dataset Link](https://drive.google.com/drive/folders/1lhT6S6Y54nqG047N_MXlOacB50pb41Be?usp=drive_link). You can access the dataset from the following link:
 
 - [Kaggle Tamil Handwritten Character Dataset](https://www.kaggle.com/datasets/gauravduttakiit/tamil-handwritten-character-recognition?select=train)
 
@@ -104,19 +104,22 @@ The CRNN model was trained on a bilingual dataset (Tamil and English):
 
 ### Trackpad Input:
 
-(SPACE FOR TRACKINPUT PHOTO)
+
 
 ### Model Layers:
+<img width="483" alt="Screenshot 2024-10-08 at 13 14 20" src="https://github.com/user-attachments/assets/94d1c17a-14ad-4773-9791-103d52e9ea99">
 
-(SPACE FOR LAYER DIAGRAM SCREENSHOT)
+
 
 ### CRNN Model Accuracy:
+<img width="799" alt="Screenshot 2024-10-08 at 13 03 27" src="https://github.com/user-attachments/assets/bca86f53-e0af-40fd-991f-526f33aa4826">
 
-(SPACE FOR ACCURACY SCREENSHOT)
+
+
 
 ### Audio Output:
 
-(SPACE FOR AUDIO OUTPUT)
+
 
 ---
 
