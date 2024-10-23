@@ -134,6 +134,7 @@ Find the audio output in the following link:
 Other inputs:
 ![WhatsApp Image 2024-09-22 at 22 41 12 (1)](https://github.com/user-attachments/assets/2a4d31e4-a3e4-42c7-bbd8-1f26e6804b76)
 
+![WhatsApp Image 2024-09-22 at 23 11 04 (1)](https://github.com/user-attachments/assets/cf17f845-74cf-4639-ad82-67fb93053beb)
 
 ### Model Layers:
 <img width="483" alt="Screenshot 2024-10-08 at 13 14 20" src="https://github.com/user-attachments/assets/94d1c17a-14ad-4773-9791-103d52e9ea99">
