@@ -104,6 +104,35 @@ The CRNN model was trained on a bilingual dataset (Tamil and English):
 
 ### Trackpad Input:
 
+<img width="1440" alt="Screenshot 2024-10-23 at 23 54 38" src="https://github.com/user-attachments/assets/cfefedbc-5ad5-4203-9ecd-9a6aa8512b74">
+
+### Audio Output:
+Find the audio output in the following link:
+[Audio Output Link](https://drive.google.com/file/d/1Pd7WGhPdK8Kudf-XMa9L4OAxVUQAG3VC/view?usp=sharing)
+### File Upload:
+![WhatsApp Image 2024-08-20 at 23 33 57](https://github.com/user-attachments/assets/5b5acaf7-147c-45ae-8fd5-211df915768b)
+### File Output:
+Find the audio output in the following link:
+[Audio Output Link](https://drive.google.com/file/d/1d9drceGnL1ZjUtYqD9RDGvcZRKc6hDi3/view?usp=sharing)
+
+<img width="1121" alt="Screenshot 2024-10-24 at 00 04 39" src="https://github.com/user-attachments/assets/9d5bf78d-6f90-4d3a-af5d-84751daabda3">
+
+### Trackpad Tamil Input:
+![WhatsApp Image 2024-10-24 at 00 09 43](https://github.com/user-attachments/assets/74ef9600-addd-4614-84b2-6730828c823b)
+
+### Output: 
+Find the audio output in the following link:
+[Audio Output Link](https://drive.google.com/file/d/1Hu-w-XSNCGZs0qbRTlj7Vv1WYKVPFmth/view?usp=sharing)
+
+### Camera Upload Input:
+![WhatsApp Image 2024-10-24 at 00 17 20](https://github.com/user-attachments/assets/9c27ce00-37a4-4619-9782-89c0b730f2d4)
+
+### Output:
+Find the audio output in the following link:
+[Audio Output Link](https://drive.google.com/file/d/1aCUONdRddMOt9KviWcJ8vAgpIZI7f0r-/view?usp=sharing)
+
+Other inputs:
+![WhatsApp Image 2024-09-22 at 22 41 12 (1)](https://github.com/user-attachments/assets/2a4d31e4-a3e4-42c7-bbd8-1f26e6804b76)
 
 
 ### Model Layers:
@@ -115,9 +144,6 @@ The CRNN model was trained on a bilingual dataset (Tamil and English):
 <img width="799" alt="Screenshot 2024-10-08 at 13 03 27" src="https://github.com/user-attachments/assets/bca86f53-e0af-40fd-991f-526f33aa4826">
 
 
-
-
-### Audio Output:
 
 
 
