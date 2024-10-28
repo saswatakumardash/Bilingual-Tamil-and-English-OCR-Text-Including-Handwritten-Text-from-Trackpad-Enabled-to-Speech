@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tamil Handwriting to Speech - Draw or Upload</title>
+    <title>OCR Text to Speech - Draw or Upload or Take a picture</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -263,7 +263,6 @@
             <a href="#" class="nav-logo">OCR Text to Speech</a>
             <div class="nav-links">
                 <a href="#" id="home-link">Home</a>
-                <a href="#" id="about-link">About</a>
                 <a href="#" id="contact-link">Contact</a>
             </div>
         </div>
@@ -271,14 +270,14 @@
 
     <div class="container">
         <h1>OCR Text to Speech</h1>
-        <h2>Draw on Trackpad or Upload a File</h2>
+        <h2>Draw on Trackpad or Upload a File or Take a Picture</h2>
         
         <p>Choose an option:</p>
         <div class="action-buttons">
             <button id="draw-btn">Draw on Screen</button>
             <button id="upload-file-btn">Upload an Image File</button>
             <button id="camera-btn">Capture from Camera</button>
-            <button id="back-btn">Back</button>
+            
         </div>
 
         <!-- Image Preview Container -->
@@ -287,7 +286,7 @@
             <img id="preview-img" src="" alt="Preview"/>
         </div>
 
-        <canvas id="trackpad" width="600" height="600" style="display:none;"></canvas>
+        <canvas id="trackpad" width="800" height="800" style="display:none;"></canvas>
 
         <div class="pen-settings" style="display:none;">
             <label for="pen-thickness">Pen Thickness:</label>
@@ -618,7 +617,7 @@
             }, 'image/png');
         });
 
-        document.getElementById('back-btn').addEventListener('click', resetToHome);
+        
 
         document.getElementById('upload-file-btn').addEventListener('click', () => {
             document.getElementById('file-input').click();
