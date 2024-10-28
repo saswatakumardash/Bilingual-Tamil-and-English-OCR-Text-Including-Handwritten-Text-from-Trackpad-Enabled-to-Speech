@@ -3,7 +3,8 @@
 This project enables users to convert handwritten Tamil and English text, including text drawn on a trackpad, into audio. The application uses a **CRNN model** for OCR and generates audio output using **gTTS**. Users can input text through a trackpad or upload an image, with the option for mobile users to use their camera.
 
 <img width="1440" alt="Screenshot 2024-10-24 at 00 29 34" src="https://github.com/user-attachments/assets/e9630116-395f-488f-af18-6860b6f2c165">
-
+NEW UPDATED WEBSITE 
+<img width="1440" alt="Screenshot 2024-10-28 at 18 51 23" src="https://github.com/user-attachments/assets/59c429e8-fed4-486e-97a7-3d2378b5b8d3">
 
 ## Features:
 - **Trackpad Input**: Users can write Tamil or English text on the trackpad, which is then converted to audio.
