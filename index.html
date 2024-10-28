@@ -132,6 +132,7 @@
         <input type="file" id="file-input" accept="image/png, image/jpeg" style="display:none;"/>
 
         <div id="control-buttons" style="display:none;">
+            <button id="pen-btn">Pen</button>
             <button id="eraser-btn">Eraser</button>
             <button id="clear-btn">Clear</button>
             <button id="upload-drawing-btn">Upload Drawing</button>
@@ -167,6 +168,7 @@
         const eraserTypeSelect = document.getElementById('eraser-type');
         let drawing = false;
         let isErasing = false;
+        
 
         ctx.fillStyle = "white";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -203,7 +205,11 @@
         canvas.addEventListener('mouseup', () => {
             drawing = false;
         });
-         document.getElementById('eraser-btn').addEventListener('click', () => {
+        document.getElementById('pen-btn').addEventListener('click', () => {
+            isErasing = false; // Set erasing to false
+        });
+        
+        document.getElementById('eraser-btn').addEventListener('click', () => {
             isErasing = !isErasing;
             if (eraserTypeSelect.value === 'all') {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
