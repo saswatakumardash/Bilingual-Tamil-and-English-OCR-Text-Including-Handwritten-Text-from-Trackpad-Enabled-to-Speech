@@ -4,7 +4,9 @@ This project enables users to convert handwritten Tamil and English text, includ
 
 <img width="1440" alt="Screenshot 2024-10-24 at 00 29 34" src="https://github.com/user-attachments/assets/e9630116-395f-488f-af18-6860b6f2c165">
 NEW UPDATED WEBSITE 
-<img width="1440" alt="Screenshot 2024-10-28 at 18 51 23" src="https://github.com/user-attachments/assets/59c429e8-fed4-486e-97a7-3d2378b5b8d3">
+<img width="1440" alt="Screenshot 2024-10-28 at 19 14 32" src="https://github.com/user-attachments/assets/9d9c54b1-7da9-4a35-93e9-1d34641f3a3c">
+
+
 
 ## Features:
 - **Trackpad Input**: Users can write Tamil or English text on the trackpad, which is then converted to audio.
