@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OCR to Speech - Draw or Upload</title>
+    <title>Tamil Handwriting to Speech - Draw or Upload</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -99,7 +99,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>OCR to Speech</h1>
+        <h1>Tamil Handwriting to Speech</h1>
         <h2>Draw on Trackpad or Upload a File</h2>
         
         <p>Choose an option:</p>
@@ -128,10 +128,7 @@
         <div id="control-buttons" style="display:none;">
             <button id="clear-btn">Clear</button>
             <button id="upload-drawing-btn">Upload Drawing</button>
-            <button id="erase-btn">Erase</button>
             <button id="save-drawing-btn">Save Drawing</button>
-            <button id="pencil-btn">Pencil</button>
-
         </div>
 
         <video id="camera-video" width="400" height="300" autoplay style="display:none;"></video>
@@ -221,7 +218,7 @@
                 const formData = new FormData();
                 formData.append('file', blob, 'drawing.png');
 
-                const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
+                const response = await fetch(${ngrokUrl}/upload/, { // Updated URL
                     method: 'POST',
                     body: formData
                 });
@@ -248,7 +245,7 @@
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
+            const response = await fetch(${ngrokUrl}/upload/, { // Updated URL
                 method: 'POST',
                 body: formData
             });
@@ -332,7 +329,7 @@
             formData.append('file', blob, 'cropped-image.png');
 
             // Send cropped image to backend
-            const response = await fetch(`${ngrokUrl}/upload/`, { 
+            const response = await fetch(${ngrokUrl}/upload/, { 
                 method: 'POST',
                 body: formData
             });
