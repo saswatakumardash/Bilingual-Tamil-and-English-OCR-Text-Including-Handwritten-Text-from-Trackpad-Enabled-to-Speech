@@ -50,7 +50,8 @@
             font-size: 16px;
             margin-right: 10px;
         }
-        .pen-settings select, .pen-settings input {
+        .pen-settings select,
+        .pen-settings input {
             padding: 10px;
             font-size: 16px;
             margin: 0 10px;
@@ -110,7 +111,7 @@
             <button id="back-btn">Back</button>
         </div>
 
-        <canvas id="trackpad" width="400" height="400" style="display:none;"></canvas>
+        <canvas id="trackpad" width="600" height="600" style="display:none;"></canvas>
 
         <div class="pen-settings" style="display:none;">
             <label for="pen-thickness">Pen Thickness:</label>
@@ -141,15 +142,18 @@
         <audio id="audio-player" controls style="display:none;"></audio>
         <a id="download-link" class="download-link" href="#" download style="display:none;">Download Audio</a>
 
-        <footer>
-            © Saswata Kumar Dash 2024
-        </footer>
+       <footer>
+           <p>© Saswata Kumar Dash 2024</p>
+           <p><strong>Note:</strong> The backend is available from <strong>11:00 AM to 11:00 PM</strong> daily.</p>
+           <p>If you need the website to be available at a specific time, please contact us at <strong><a href="mailto:saswatdashai577@gmail.com">saswatdashai577@gmail.com</a></strong>.</p>
+      </footer>
+
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
     <script>
-        const ngrokUrl = 'https://e420-2401-4900-74e7-2fc-54b2-3f6e-8d9e-8027.ngrok-free.app'; // Update this to your ngrok URL
+        const ngrokUrl = 'https://e420-2401-4900-74e7-2fc-54b2-3f6e-8d9e-8027.ngrok-free.app';
         const canvas = document.getElementById('trackpad');
         const ctx = canvas.getContext('2d');
         const penThicknessInput = document.getElementById('pen-thickness');
@@ -215,7 +219,7 @@
                 const formData = new FormData();
                 formData.append('file', blob, 'drawing.png');
 
-                const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
+                const response = await fetch(`${ngrokUrl}/upload/`, {
                     method: 'POST',
                     body: formData
                 });
@@ -226,27 +230,33 @@
                     document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
                     document.getElementById('audio-player').src = result.audio_file;
                     document.getElementById('audio-player').style.display = 'block';
+                    document.getElementById('audio-player').volume = 1.0;
                     document.getElementById('download-link').href = result.audio_file;
                     document.getElementById('download-link').style.display = 'block';
                 }
             }, 'image/png');
         });
 
+        document.getElementById('back-btn').addEventListener('click', () => {
+            document.getElementById('trackpad').style.display = 'none';
+            document.getElementById('file-input').style.display = 'none';
+            document.getElementById('camera-video').style.display = 'none';
+            document.getElementById('capture-btn').style.display = 'none';
+            document.getElementById('captured-image').style.display = 'none';
+            document.getElementById('crop-btn').style.display = 'none';
+            document.getElementById('clear-capture-btn').style.display = 'none';
+        });
+
         document.getElementById('upload-file-btn').addEventListener('click', () => {
             document.getElementById('file-input').click();
         });
 
-        document.getElementById('file-input').addEventListener('change', async () => {
-            const file = document.getElementById('file-input').files[0];
-            if (!file) {
-                alert("Please select a file to upload.");
-                return;
-            }
-
+        document.getElementById('file-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
             const formData = new FormData();
             formData.append('file', file);
 
-            const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
+            const response = await fetch(`${ngrokUrl}/upload/`, {
                 method: 'POST',
                 body: formData
             });
@@ -257,109 +267,90 @@
                 document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
                 document.getElementById('audio-player').src = result.audio_file;
                 document.getElementById('audio-player').style.display = 'block';
+                document.getElementById('audio-player').volume = 1.0;
                 document.getElementById('download-link').href = result.audio_file;
                 document.getElementById('download-link').style.display = 'block';
             }
         });
 
-        const video = document.getElementById('camera-video');
-        const captureBtn = document.getElementById('capture-btn');
-        const cropBtn = document.getElementById('crop-btn');
-        const saveCroppedBtn = document.createElement('button');
-        saveCroppedBtn.innerText = 'Save Cropped Image';
-        saveCroppedBtn.style.display = 'none';
-        document.body.appendChild(saveCroppedBtn);
-
-        const cameraBtn = document.getElementById('camera-btn');
-        const capturedImage = document.getElementById('captured-image');
-        const clearCaptureBtn = document.getElementById('clear-capture-btn');
-        let cropper;
-
-        cameraBtn.addEventListener('click', async () => {
-            video.style.display = 'block';
-            captureBtn.style.display = 'block';
+        document.getElementById('camera-btn').addEventListener('click', async () => {
+            document.getElementById('camera-video').style.display = 'block';
+            document.getElementById('capture-btn').style.display = 'block';
 
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = stream;
-            } catch (err) {
-                console.error("Error accessing camera: ", err);
+                document.getElementById('camera-video').srcObject = stream;
+            } catch (error) {
+                console.error("Error accessing camera:", error);
             }
         });
 
-        captureBtn.addEventListener('click', () => {
-            const canvasCapture = document.createElement('canvas');
-            canvasCapture.width = video.videoWidth;
-            canvasCapture.height = video.videoHeight;
-            const ctxCapture = canvasCapture.getContext('2d');
-            ctxCapture.drawImage(video, 0, 0);
-
-            capturedImage.src = canvasCapture.toDataURL('image/png');
+        document.getElementById('capture-btn').addEventListener('click', () => {
+            const video = document.getElementById('camera-video');
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const capturedImage = document.getElementById('captured-image');
+            capturedImage.src = canvas.toDataURL('image/png');
             capturedImage.style.display = 'block';
-            cropBtn.style.display = 'block';
-            clearCaptureBtn.style.display = 'block';
-            saveCroppedBtn.style.display = 'none';
+            document.getElementById('crop-btn').style.display = 'block';
+            document.getElementById('clear-capture-btn').style.display = 'block';
+        });
 
-            const stream = video.srcObject;
-            const tracks = stream.getTracks();
-            tracks.forEach(track => track.stop());
-            video.style.display = 'none';
-            captureBtn.style.display = 'none';
+        let cropper;
+        document.getElementById('crop-btn').addEventListener('click', () => {
+            const capturedImage = document.getElementById('captured-image');
+
+            if (cropper) cropper.destroy();
 
             cropper = new Cropper(capturedImage, {
                 aspectRatio: 1,
-                viewMode: 1
-            });
-        });
-
-        cropBtn.addEventListener('click', () => {
-            const croppedCanvas = cropper.getCroppedCanvas();
-            croppedCanvas.toBlob(async (blob) => {
-                const formData = new FormData();
-                formData.append('file', blob, 'cropped-image.png');
-
-                const response = await fetch(`${ngrokUrl}/upload/`, { // Updated URL
-                    method: 'POST',
-                    body: formData
-                });
-
-                const result = await response.json();
-
-                if (result.extracted_text) {
-                    document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
-                    document.getElementById('audio-player').src = result.audio_file;
-                    document.getElementById('audio-player').style.display = 'block';
-                    document.getElementById('download-link').href = result.audio_file;
-                    document.getElementById('download-link').style.display = 'block';
+                viewMode: 1,
+                crop(event) {
                 }
-
-                saveCroppedBtn.style.display = 'block';
-            }, 'image/png');
+            });
+            document.getElementById('upload-cropped-btn').style.display = 'block';
         });
 
-        saveCroppedBtn.addEventListener('click', () => {
-            const croppedCanvas = cropper.getCroppedCanvas();
-            const link = document.createElement('a');
-            link.download = 'cropped-image.png';
-            link.href = croppedCanvas.toDataURL();
-            link.click();
+        document.getElementById('clear-capture-btn').addEventListener('click', () => {
+            document.getElementById('captured-image').style.display = 'none';
+            document.getElementById('crop-btn').style.display = 'none';
+            document.getElementById('clear-capture-btn').style.display = 'none';
+
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
         });
 
-        clearCaptureBtn.addEventListener('click', () => {
-            capturedImage.style.display = 'none';
-            cropBtn.style.display = 'none';
-            clearCaptureBtn.style.display = 'none';
-            saveCroppedBtn.style.display = 'none';
-            document.getElementById('recognized-text').innerText = "";
-            document.getElementById('audio-player').style.display = 'none';
-            document.getElementById('download-link').style.display = 'none';
-            window.location.href = 'index.html';
-        });
+        document.getElementById('upload-cropped-btn').addEventListener('click', async () => {
+            if (cropper) {
+                cropper.getCroppedCanvas().toBlob(async (blob) => {
+                    const formData = new FormData();
+                    formData.append('file', blob, 'captured.png');
 
-        document.getElementById('back-btn').addEventListener('click', () => {
-            window.location.href = 'index.html';
+                    const response = await fetch(`${ngrokUrl}/upload/`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.extracted_text) {
+                        document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
+                        document.getElementById('audio-player').src = result.audio_file;
+                        document.getElementById('audio-player').style.display = 'block';
+                        document.getElementById('audio-player').volume = 1.0;
+                        document.getElementById('download-link').href = result.audio_file;
+                        document.getElementById('download-link').style.display = 'block';
+                    }
+                }, 'image/png');
+            }
         });
     </script>
 </body>
 </html>
+
 
