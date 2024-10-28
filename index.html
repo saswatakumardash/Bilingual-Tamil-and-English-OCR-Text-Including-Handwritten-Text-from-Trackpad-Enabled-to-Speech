@@ -349,8 +349,18 @@
                 }, 'image/png');
             }
         });
+        // Clear the captured image and hide elements when "Clear" button is clicked
+        clearCaptureBtn.addEventListener('click', () => {
+            capturedImage.style.display = 'none'; // Hide the captured image
+            cropBtn.style.display = 'none'; // Hide the crop button
+            clearCaptureBtn.style.display = 'none'; // Hide the clear button
+            document.getElementById('recognized-text').innerText = ""; // Clear the recognized text
+            document.getElementById('audio-player').style.display = 'none'; // Hide the audio player
+            document.getElementById('download-link').style.display = 'none'; // Hide the download link
+            videoElement.style.display = 'none'; // Hide the video element (camera preview)
+            videoElement.srcObject = null; // Reset the camera stream
+    });
     </script>
 </body>
 </html>
-
 
