@@ -129,7 +129,6 @@
             <button id="clear-btn">Clear</button>
             <button id="upload-drawing-btn">Upload Drawing</button>
             <button id="erase-btn">Erase</button>
-
             <button id="save-drawing-btn">Save Drawing</button>
             <button id="pencil-btn">Pencil</button>
 
@@ -202,16 +201,6 @@
             document.getElementById('audio-player').style.display = 'none';
             document.getElementById('download-link').style.display = 'none';
         });
-        // Add eraser functionality
-       document.getElementById('eraser-btn').addEventListener('click', () => {
-           ctx.globalCompositeOperation = 'destination-out'; // Set composite operation for erasing
-           ctx.lineWidth = penThicknessInput.value; // Set the eraser size based on pen thickness
-       });
-        // Reset to normal drawing mode
-        document.getElementById('pencil-btn').addEventListener('click', () => {
-            ctx.globalCompositeOperation = 'source-over'; // Reset to normal drawing mode
-        });
-
 
         document.getElementById('save-drawing-btn').addEventListener('click', () => {
             const link = document.createElement('a');
