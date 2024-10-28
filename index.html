@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tamil Handwriting to Speech - Draw or Upload</title>
     <style>
         body {
@@ -14,7 +14,75 @@
             color: #333;
             margin: 0;
             padding: 0;
+            overscroll-behavior: none;
         }
+
+        /* Navigation Bar Styles */
+        .navbar {
+            background-color: #007ACC;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-logo {
+            color: white;
+            font-size: 24px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255,255,255,0.2);
+        }
+
+        /* Image Preview Styles */
+        .image-preview {
+            margin: 20px auto;
+            max-width: 400px;
+            border: 2px solid #007ACC;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: white;
+            display: none;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 3px;
+        }
+
+        .preview-label {
+            font-weight: bold;
+            color: #007ACC;
+            margin-bottom: 10px;
+        }
+
         .container {
             background-color: rgba(255, 255, 255, 0.9);
             margin: 30px auto;
@@ -23,39 +91,48 @@
             max-width: 800px;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
         }
+
         h1 {
             font-size: 36px;
             margin-bottom: 10px;
             color: #222;
         }
+
         h2 {
             font-size: 28px;
             margin-top: 0;
             color: #007ACC;
         }
+
         canvas {
             border: 2px solid #333;
             margin: 20px auto;
             display: block;
             background-color: white;
             border-radius: 5px;
+            touch-action: none;
         }
+
         .pen-settings {
             display: flex;
             justify-content: center;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
+
         .pen-settings label {
             font-size: 16px;
             margin-right: 10px;
         }
+
         .pen-settings select,
         .pen-settings input {
             padding: 10px;
             font-size: 16px;
             margin: 0 10px;
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
@@ -65,50 +142,149 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
+
         button:hover {
             background-color: #005a99;
         }
+
         .action-buttons {
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        .action-buttons button {
-            margin: 0 10px;
-        }
+
         #recognized-text {
             font-size: 18px;
             margin: 20px 0;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
         }
+
         audio {
             margin-top: 20px;
+            width: 100%;
+            max-width: 400px;
         }
+
         footer {
             margin-top: 20px;
             font-size: 14px;
             color: #555;
+            padding: 20px;
         }
+
         a.download-link {
             display: block;
             margin-top: 10px;
             color: #007ACC;
             text-decoration: none;
+            padding: 10px;
+            transition: color 0.3s;
+        }
+
+        a.download-link:hover {
+            color: #005a99;
+        }
+
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            canvas {
+                width: 100%;
+                max-width: 600px;
+                height: 300px;
+            }
+            
+            .pen-settings {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .pen-settings label,
+            .pen-settings select,
+            .pen-settings input {
+                margin: 5px 0;
+                width: 100%;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons button {
+                margin: 5px 0;
+                width: 100%;
+            }
+            
+            #control-buttons button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            video {
+                width: 100% !important;
+                height: auto !important;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">OCR Text to Speech</a>
+            <div class="nav-links">
+                <a href="#" id="home-link">Home</a>
+                <a href="#" id="about-link">About</a>
+                <a href="#" id="contact-link">Contact</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="container">
         <h1>OCR Text to Speech</h1>
         <h2>Draw on Trackpad or Upload a File</h2>
         
         <p>Choose an option:</p>
         <div class="action-buttons">
-            <button id="draw-btn">Draw on Trackpad</button>
+            <button id="draw-btn">Draw on Screen</button>
             <button id="upload-file-btn">Upload an Image File</button>
             <button id="camera-btn">Capture from Camera</button>
             <button id="back-btn">Back</button>
+        </div>
+
+        <!-- Image Preview Container -->
+        <div class="image-preview" id="image-preview">
+            <div class="preview-label">Selected Image Preview</div>
+            <img id="preview-img" src="" alt="Preview"/>
         </div>
 
         <canvas id="trackpad" width="600" height="600" style="display:none;"></canvas>
@@ -122,6 +298,7 @@
                 <option value="round">Round</option>
                 <option value="square">Square</option>
             </select>
+            
             <label for="eraser-type">Eraser:</label>
             <select id="eraser-type">
                 <option value="selected">Clear Selected Area</option>
@@ -139,22 +316,22 @@
             <button id="save-drawing-btn">Save Drawing</button>
         </div>
 
-        <video id="camera-video" width="400" height="300" autoplay style="display:none;"></video>
+        <video id="camera-video" width="400" height="300" autoplay playsinline style="display:none;"></video>
         <button id="capture-btn" style="display:none;">Capture Photo</button>
         <img id="captured-image" style="display:none; max-width: 100%;"/>
         <button id="crop-btn" style="display:none;">Crop & Upload</button>
+        <button id="upload-cropped-btn" style="display:none;">Upload Cropped Image</button>
         <button id="clear-capture-btn" style="display:none;">Clear Captured Image</button>
 
         <p id="recognized-text"></p>
         <audio id="audio-player" controls style="display:none;"></audio>
         <a id="download-link" class="download-link" href="#" download style="display:none;">Download Audio</a>
 
-       <footer>
-           <p>© Saswata Kumar Dash 2024</p>
-           <p><strong>Note:</strong> The backend is available from <strong>11:00 AM to 11:00 PM</strong> daily.</p>
-           <p>If you need the website to be available at a specific time, please contact us at <strong><a href="mailto:saswatdashai577@gmail.com">saswatdashai577@gmail.com</a></strong>.</p>
-      </footer>
-
+        <footer>
+            <p>© Saswata Kumar Dash 2024</p>
+            <p><strong>Note:</strong> The backend is available from <strong>11:00 AM to 11:00 PM</strong> daily.</p>
+            <p>If you need the website to be available at a specific time, please contact us at <strong><a href="mailto:saswatdashai577@gmail.com">saswatdashai577@gmail.com</a></strong>.</p>
+        </footer>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
@@ -168,13 +345,201 @@
         const eraserTypeSelect = document.getElementById('eraser-type');
         let drawing = false;
         let isErasing = false;
-        
+        let lastX, lastY;
+        let cropper;
 
-        ctx.fillStyle = "white";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        // Navigation handling
+        document.getElementById('home-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            resetToHome();
+        });
 
-        ctx.lineWidth = penThicknessInput.value;
-        ctx.lineCap = penTypeSelect.value;
+        document.getElementById('about-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            alert('About page coming soon!');
+        });
+
+        document.getElementById('contact-link').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.location.href = 'mailto:saswatdashai577@gmail.com';
+        });
+
+        // Initialize canvas
+        function initCanvas() {
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.lineWidth = penThicknessInput.value;
+            ctx.lineCap = penTypeSelect.value;
+            ctx.strokeStyle = "black";
+        }
+
+        // Touch event handlers
+        function getTouchPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            return {
+                x: (touch.clientX - rect.left) * (canvas.width / rect.width),
+                y: (touch.clientY - rect.top) * (canvas.height / rect.height)
+            };
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const pos = getTouchPos(e);
+            lastX = pos.x;
+            lastY = pos.y;
+            drawing = true;
+
+            if (isErasing) {
+                if (eraserTypeSelect.value === 'selected') {
+                    ctx.clearRect(lastX - ctx.lineWidth, lastY - ctx.lineWidth, 
+                                ctx.lineWidth * 2, ctx.lineWidth * 2);
+                }
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+            }
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!drawing) return;
+
+            const pos = getTouchPos(e);
+            if (isErasing) {
+                if (eraserTypeSelect.value === 'selected') {
+                    ctx.clearRect(pos.x - ctx.lineWidth, pos.y - ctx.lineWidth, 
+                                ctx.lineWidth * 2, ctx.lineWidth * 2);
+                }
+            } else {
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            }
+            lastX = pos.x;
+            lastY = pos.y;
+        }
+
+        function handleTouchEnd(e) {
+            e.preventDefault();
+            drawing = false;
+        }
+
+        // Mouse event handlers
+        function handleMouseDown(e) {
+            drawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            if (isErasing && eraserTypeSelect.value === 'selected') {
+                ctx.clearRect(lastX - ctx.lineWidth, lastY - ctx.lineWidth, 
+                            ctx.lineWidth * 2, ctx.lineWidth * 2);
+            } else {
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (!drawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+            if (isErasing && eraserTypeSelect.value === 'selected') {
+                ctx.clearRect(currentX - ctx.lineWidth, currentY - ctx.lineWidth, 
+                            ctx.lineWidth * 2, ctx.lineWidth * 2);
+            } else {
+                ctx.lineTo(currentX, currentY);
+                ctx.stroke();
+            }
+        }
+
+        function handleMouseUp() {
+            drawing = false;
+        }
+
+        // Camera handling
+        async function initCamera() {
+            const constraints = {
+                video: {
+                    facingMode: { exact: "environment" },
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                }
+            };
+
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const videoElement = document.getElementById('camera-video');
+                videoElement.srcObject = stream;
+                return true;
+            } catch (error) {
+                console.log("Back camera failed, trying front camera:", error);
+                try {
+                    const frontStream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: "user" }
+                    });
+                    const videoElement = document.getElementById('camera-video');
+                    videoElement.srcObject = frontStream;
+                    return true;
+                } catch (frontError) {
+                    console.error("Camera access failed:", frontError);
+                    alert("Unable to access camera. Please check permissions.");
+                    return false;
+                }
+            }
+        }
+
+        // Reset to homepage
+        function resetToHome() {
+            // Hide all components
+            const elementsToHide = [
+                'trackpad', 'file-input', 'camera-video', 'capture-btn',
+                'captured-image', 'crop-btn', 'clear-capture-btn', 'upload-cropped-btn'
+            ];
+            elementsToHide.forEach(id => {
+                document.getElementById(id).style.display = 'none';
+            });
+
+            document.querySelector('.pen-settings').style.display = 'none';
+            document.getElementById('control-buttons').style.display = 'none';
+
+            // Stop camera if it's running
+            const videoElement = document.getElementById('camera-video');
+            if (videoElement.srcObject) {
+                const tracks = videoElement.srcObject.getTracks();
+                tracks.forEach(track => track.stop());
+                videoElement.srcObject = null;
+            }
+
+            // Clear recognized text and audio
+            document.getElementById('recognized-text').innerText = "";
+            document.getElementById('audio-player').style.display = 'none';
+            document.getElementById('download-link').style.display = 'none';
+
+            // Destroy cropper if exists
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+
+            // Reset canvas
+            initCanvas();
+
+            // Show main buttons
+            document.querySelector('.action-buttons').style.display = 'flex';
+        }
+
+        // Event Listeners
+        canvas.addEventListener('touchstart', handleTouchStart, false);
+        canvas.addEventListener('touchmove', handleTouchMove, false);
+        canvas.addEventListener('touchend', handleTouchEnd, false);
+
+        canvas.addEventListener('mousedown', handleMouseDown);
+        canvas.addEventListener('mousemove', handleMouseMove);
+        canvas.addEventListener('mouseup', handleMouseUp);
+        canvas.addEventListener('mouseout', handleMouseUp);
 
         penThicknessInput.addEventListener('input', () => {
             ctx.lineWidth = penThicknessInput.value;
@@ -184,32 +549,10 @@
             ctx.lineCap = penTypeSelect.value;
         });
 
-        canvas.addEventListener('mousedown', (e) => {
-            if (isErasing && eraserTypeSelect.value === 'selected') {
-                ctx.clearRect(e.offsetX, e.offsetY, ctx.lineWidth * 2, ctx.lineWidth * 2);
-            } else {
-                drawing = true;
-                ctx.beginPath();
-                ctx.moveTo(e.offsetX, e.offsetY);
-            }
+        document.getElementById('pen-btn').addEventListener('click', () => {
+            isErasing = false;
         });
 
-        canvas.addEventListener('mousemove', (e) => {
-            if (drawing && !isErasing) {
-                ctx.lineTo(e.offsetX, e.offsetY);
-                ctx.stroke();
-            } else if (isErasing && eraserTypeSelect.value === 'selected') {
-                ctx.clearRect(e.offsetX, e.offsetY, ctx.lineWidth * 2, ctx.lineWidth * 2);
-            }
-        });
-        canvas.addEventListener('mouseup', () => {
-            drawing = false;
-        });
-     
-        document.getElementById('pen-btn').addEventListener('click', () => {
-            isErasing = false; // Set erasing to false
-        });
-        
         document.getElementById('eraser-btn').addEventListener('click', () => {
             isErasing = !isErasing;
             if (eraserTypeSelect.value === 'all') {
@@ -244,12 +587,153 @@
             document.querySelector('.pen-settings').style.display = 'flex';
             document.getElementById('control-buttons').style.display = 'block';
             document.getElementById('file-input').style.display = 'none';
+            document.querySelector('.action-buttons').style.display = 'none';
         });
 
         document.getElementById('upload-drawing-btn').addEventListener('click', async () => {
             canvas.toBlob(async (blob) => {
                 const formData = new FormData();
                 formData.append('file', blob, 'drawing.png');
+
+                try {
+                    const response = await fetch(`${ngrokUrl}/upload/`, {
+                        method: 'POST',
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (result.extracted_text) {
+                        document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
+                        document.getElementById('audio-player').src = result.audio_file;
+                        document.getElementById('audio-player').style.display = 'block';
+                        document.getElementById('audio-player').volume = 1.0;
+                        document.getElementById('download-link').href = result.audio_file;
+                        document.getElementById('download-link').style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error("Upload failed:", error);
+                    alert("Upload failed. Please try again.");
+                }
+            }, 'image/png');
+        });
+
+        document.getElementById('back-btn').addEventListener('click', resetToHome);
+
+        document.getElementById('upload-file-btn').addEventListener('click', () => {
+            document.getElementById('file-input').click();
+        });
+
+        document.getElementById('file-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch(`${ngrokUrl}/upload/`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.extracted_text) {
+                    document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
+                    document.getElementById('audio-player').src = result.audio_file;
+                    document.getElementById('audio-player').style.display = 'block';
+                    document.getElementById('audio-player').volume = 1.0;
+                    document.getElementById('download-link').href = result.audio_file;
+                    document.getElementById('download-link').style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Upload failed:", error);
+                alert("Upload failed. Please try again.");
+            }
+        });
+
+        document.getElementById('camera-btn').addEventListener('click', async () => {
+            document.querySelector('.action-buttons').style.display = 'none';
+            const success = await initCamera();
+            if (success) {
+                document.getElementById('camera-video').style.display = 'block';
+                document.getElementById('capture-btn').style.display = 'block';
+            }
+        });
+
+        document.getElementById('capture-btn').addEventListener('click', () => {
+            const video = document.getElementById('camera-video');
+            const capturedImage = document.getElementById('captured-image');
+            const canvas = document.createElement('canvas');
+            
+            // Set canvas size to match video dimensions
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            
+            // Draw the video frame to canvas
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to image
+            capturedImage.src = canvas.toDataURL('image/png');
+            capturedImage.style.display = 'block';
+            
+            // Stop camera stream
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+            video.srcObject = null;
+            
+            // Hide video element and capture button
+            video.style.display = 'none';
+            document.getElementById('capture-btn').style.display = 'none';
+            
+            // Show crop and clear buttons
+            document.getElementById('crop-btn').style.display = 'block';
+            document.getElementById('clear-capture-btn').style.display = 'block';
+        });
+
+        document.getElementById('crop-btn').addEventListener('click', () => {
+            const capturedImage = document.getElementById('captured-image');
+            
+            if (cropper) {
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(capturedImage, {
+                aspectRatio: 1,
+                viewMode: 1,
+                ready: function() {
+                    // Show upload button when cropper is ready
+                    document.getElementById('upload-cropped-btn').style.display = 'block';
+                }
+            });
+        });
+
+        document.getElementById('clear-capture-btn').addEventListener('click', () => {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            
+            document.getElementById('captured-image').style.display = 'none';
+            document.getElementById('crop-btn').style.display = 'none';
+            document.getElementById('clear-capture-btn').style.display = 'none';
+            document.getElementById('upload-cropped-btn').style.display = 'none';
+            
+            // Return to main menu
+            resetToHome();
+        });
+
+        document.getElementById('upload-cropped-btn').addEventListener('click', async () => {
+            if (!cropper) return;
+
+            try {
+                const croppedCanvas = cropper.getCroppedCanvas();
+                const blob = await new Promise(resolve => croppedCanvas.toBlob(resolve, 'image/png'));
+                
+                const formData = new FormData();
+                formData.append('file', blob, 'captured.png');
 
                 const response = await fetch(`${ngrokUrl}/upload/`, {
                     method: 'POST',
@@ -266,133 +750,41 @@
                     document.getElementById('download-link').href = result.audio_file;
                     document.getElementById('download-link').style.display = 'block';
                 }
-            }, 'image/png');
-        });
 
-        document.getElementById('back-btn').addEventListener('click', () => {
-            document.getElementById('trackpad').style.display = 'none';
-            document.getElementById('file-input').style.display = 'none';
-            document.getElementById('camera-video').style.display = 'none';
-            document.getElementById('capture-btn').style.display = 'none';
-            document.getElementById('captured-image').style.display = 'none';
-            document.getElementById('crop-btn').style.display = 'none';
-            document.getElementById('clear-capture-btn').style.display = 'none';
-        });
-
-        document.getElementById('upload-file-btn').addEventListener('click', () => {
-            document.getElementById('file-input').click();
-        });
-
-        document.getElementById('file-input').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            const formData = new FormData();
-            formData.append('file', file);
-
-            const response = await fetch(`${ngrokUrl}/upload/`, {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.extracted_text) {
-                document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
-                document.getElementById('audio-player').src = result.audio_file;
-                document.getElementById('audio-player').style.display = 'block';
-                document.getElementById('audio-player').volume = 1.0;
-                document.getElementById('download-link').href = result.audio_file;
-                document.getElementById('download-link').style.display = 'block';
-            }
-        });
-
-        document.getElementById('camera-btn').addEventListener('click', async () => {
-            document.getElementById('camera-video').style.display = 'block';
-            document.getElementById('capture-btn').style.display = 'block';
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                document.getElementById('camera-video').srcObject = stream;
-            } catch (error) {
-                console.error("Error accessing camera:", error);
-            }
-        });
-
-        document.getElementById('capture-btn').addEventListener('click', () => {
-            const video = document.getElementById('camera-video');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const capturedImage = document.getElementById('captured-image');
-            capturedImage.src = canvas.toDataURL('image/png');
-            capturedImage.style.display = 'block';
-            document.getElementById('crop-btn').style.display = 'block';
-            document.getElementById('clear-capture-btn').style.display = 'block';
-        });
-
-        let cropper;
-        document.getElementById('crop-btn').addEventListener('click', () => {
-            const capturedImage = document.getElementById('captured-image');
-
-            if (cropper) cropper.destroy();
-
-            cropper = new Cropper(capturedImage, {
-                aspectRatio: 1,
-                viewMode: 1,
-                crop(event) {
-                }
-            });
-            document.getElementById('upload-cropped-btn').style.display = 'block';
-        });
-
-        document.getElementById('clear-capture-btn').addEventListener('click', () => {
-            document.getElementById('captured-image').style.display = 'none';
-            document.getElementById('crop-btn').style.display = 'none';
-            document.getElementById('clear-capture-btn').style.display = 'none';
-
-            if (cropper) {
+                // Clean up after successful upload
                 cropper.destroy();
                 cropper = null;
+                document.getElementById('captured-image').style.display = 'none';
+                document.getElementById('crop-btn').style.display = 'none';
+                document.getElementById('clear-capture-btn').style.display = 'none';
+                document.getElementById('upload-cropped-btn').style.display = 'none';
+            } catch (error) {
+                console.error("Upload failed:", error);
+                alert("Upload failed. Please try again.");
             }
         });
 
-        document.getElementById('upload-cropped-btn').addEventListener('click', async () => {
-            if (cropper) {
-                cropper.getCroppedCanvas().toBlob(async (blob) => {
-                    const formData = new FormData();
-                    formData.append('file', blob, 'captured.png');
-
-                    const response = await fetch(`${ngrokUrl}/upload/`, {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    const result = await response.json();
-
-                    if (result.extracted_text) {
-                        document.getElementById('recognized-text').innerText = "Recognized Text: " + result.extracted_text;
-                        document.getElementById('audio-player').src = result.audio_file;
-                        document.getElementById('audio-player').style.display = 'block';
-                        document.getElementById('audio-player').volume = 1.0;
-                        document.getElementById('download-link').href = result.audio_file;
-                        document.getElementById('download-link').style.display = 'block';
-                    }
-                }, 'image/png');
+        // Prevent scrolling when touching the canvas
+        document.body.addEventListener('touchstart', function(e) {
+            if (e.target == canvas) {
+                e.preventDefault();
             }
-        });
-        // Clear the captured image and hide elements when "Clear" button is clicked
-        clearCaptureBtn.addEventListener('click', () => {
-            capturedImage.style.display = 'none'; // Hide the captured image
-            cropBtn.style.display = 'none'; // Hide the crop button
-            clearCaptureBtn.style.display = 'none'; // Hide the clear button
-            document.getElementById('recognized-text').innerText = ""; // Clear the recognized text
-            document.getElementById('audio-player').style.display = 'none'; // Hide the audio player
-            document.getElementById('download-link').style.display = 'none'; // Hide the download link
-            videoElement.style.display = 'none'; // Hide the video element (camera preview)
-            videoElement.srcObject = null; // Reset the camera stream
-    });
+        }, { passive: false });
+
+        document.body.addEventListener('touchend', function(e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.body.addEventListener('touchmove', function(e) {
+            if (e.target == canvas) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // Initialize the canvas
+        initCanvas();
     </script>
 </body>
 </html>
-
