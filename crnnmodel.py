@@ -103,23 +103,12 @@ model_name = "ocr_tamil.h5"
 crnn_model.save(model_name)
 print(f"Model saved as {model_name}")
 
-# -------------------------------------------
-# Step 4: Model Evaluation - Confusion Matrix and F1 Score
-# -------------------------------------------
+
 
 # Predict on the test set
 y_pred = crnn_model.predict(X_test)
 y_pred_classes = np.argmax(y_pred, axis=1)
 y_true = np.argmax(y_test, axis=1)
-
-# Confusion matrix
-conf_matrix = confusion_matrix(y_true, y_pred_classes)
-plt.figure(figsize=(12, 10))
-sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues')
-plt.xlabel('Predicted')
-plt.ylabel('True')
-plt.title('Confusion Matrix')
-plt.show()
 
 # Classification report for precision, recall, F1 score
 print(classification_report(y_true, y_pred_classes, digits=4))
