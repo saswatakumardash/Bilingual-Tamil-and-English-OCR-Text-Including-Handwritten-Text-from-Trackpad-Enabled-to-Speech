@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 from gtts import gTTS
+from ocr_tamil.ocr import OCR
 import requests  # For getting the ngrok URL
 from tensorflow.keras.models import load_model
 import uuid
@@ -63,7 +64,7 @@ async def upload_file(file: UploadFile = File(...)):
 
     # Get the ngrok public URL for sharing the audio
     public_url = get_ngrok_url()
-    audio_file_url = f"https://e420-2401-4900-74e7-2fc-54b2-3f6e-8d9e-8027.ngrok-free.app/download-audio/" if public_url else "ngrok URL not available"
+    audio_file_url = f"https://63ca-2401-4900-7011-9d4c-15f5-173-ea8-2ff2.ngrok-free.app/download-audio/" if public_url else "ngrok URL not available"
 
     return JSONResponse(content={
         "filename": file.filename,
@@ -84,4 +85,5 @@ async def download_audio():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
+
 
