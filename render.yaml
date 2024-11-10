@@ -6,11 +6,11 @@ services:
     plan: free
     runtime: python3
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT --log-level info"
+    startCommand: "uvicorn app:app --host 0.0.0.0 --port $PORT --log-level info"
     envVars:
       - key: PORT
         value: "8000" # Adjust if necessary
     autoDeploy: true
     github:
-      repo: "saswatakumardash/TamilHandwritten-OCR-to-Audio"
+      repo: "/saswatakumardash/Bilingual-Tamil-and-English-OCR-Text-Including-Handwritten-Text-from-Trackpad-Enabled-to-Speech"
       branch: main # Adjust this if you're using a different branch
