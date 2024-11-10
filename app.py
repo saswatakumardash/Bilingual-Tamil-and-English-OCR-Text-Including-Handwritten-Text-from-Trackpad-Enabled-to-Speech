@@ -63,8 +63,7 @@ async def upload_file(file: UploadFile = File(...)):
 
 
     # Get the ngrok public URL for sharing the audio
-    public_url = get_ngrok_url()
-    audio_file_url = f"https://63ca-2401-4900-7011-9d4c-15f5-173-ea8-2ff2.ngrok-free.app/download-audio/" if public_url else "ngrok URL not available"
+    audio_file_url = f"/download-audio/"
 
     return JSONResponse(content={
         "filename": file.filename,
@@ -81,9 +80,4 @@ async def download_audio():
         return response
     return JSONResponse(content={"error": "Audio file not found."}, status_code=404)
     
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000, log_level="info")
-
 
