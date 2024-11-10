@@ -3,3 +3,4 @@ uvicorn
 gtts
 Pillow
 ocr_tamil  
+tensorflow
