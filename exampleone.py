@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import os
 import shutil
 from gtts import gTTS
-from ocr_tamil.ocr import OCR
+
 import requests  # For getting the ngrok URL
 from tensorflow.keras.models import load_model
 app = FastAPI()
