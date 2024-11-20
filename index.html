@@ -488,41 +488,56 @@
             };
         }
 
-        function handleTouchStart(e) {
-            e.preventDefault();
-            const pos = getTouchPos(e);
-            lastX = pos.x;
-            lastY = pos.y;
-            drawing = true;
+    
 
-            if (isErasing) {
-                if (eraserTypeSelect.value === 'selected') {
-                    ctx.clearRect(lastX - ctx.lineWidth, lastY - ctx.lineWidth, 
-                                ctx.lineWidth * 2, ctx.lineWidth * 2);
-                }
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-            }
+       // Update touch handlers as well
+function handleTouchStart(e) {
+    e.preventDefault();
+    const pos = getTouchPos(e);
+    lastX = pos.x;
+    lastY = pos.y;
+    drawing = true;
+
+    if (isErasing) {
+        if (eraserTypeSelect.value === 'selected') {
+            // Save the current fill style
+            const originalFillStyle = ctx.fillStyle;
+            // Set fill style to white for erasing
+            ctx.fillStyle = 'white';
+            ctx.fillRect(lastX - ctx.lineWidth, lastY - ctx.lineWidth, 
+                        ctx.lineWidth * 2, ctx.lineWidth * 2);
+            // Restore the original fill style
+            ctx.fillStyle = originalFillStyle;
         }
+    } else {
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+    }
+}
 
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!drawing) return;
+function handleTouchMove(e) {
+    e.preventDefault();
+    if (!drawing) return;
 
-            const pos = getTouchPos(e);
-            if (isErasing) {
-                if (eraserTypeSelect.value === 'selected') {
-                    ctx.clearRect(pos.x - ctx.lineWidth, pos.y - ctx.lineWidth, 
-                                ctx.lineWidth * 2, ctx.lineWidth * 2);
-                }
-            } else {
-                ctx.lineTo(pos.x, pos.y);
-                ctx.stroke();
-            }
-            lastX = pos.x;
-            lastY = pos.y;
+    const pos = getTouchPos(e);
+    if (isErasing) {
+        if (eraserTypeSelect.value === 'selected') {
+            // Save the current fill style
+            const originalFillStyle = ctx.fillStyle;
+            // Set fill style to white for erasing
+            ctx.fillStyle = 'white';
+            ctx.fillRect(pos.x - ctx.lineWidth, pos.y - ctx.lineWidth, 
+                        ctx.lineWidth * 2, ctx.lineWidth * 2);
+            // Restore the original fill style
+            ctx.fillStyle = originalFillStyle;
         }
+    } else {
+        ctx.lineTo(pos.x, pos.y);
+        ctx.stroke();
+    }
+    lastX = pos.x;
+    lastY = pos.y;
+}
 
         function handleTouchEnd(e) {
             e.preventDefault();
