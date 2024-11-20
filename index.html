@@ -3,151 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OCR Text to Speech - Draw or Upload or Take a picture</title>
+    <title>OCR Magic - Draw, Upload, or Capture</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-            background-image: url('background-image.jpg');
-            background-size: cover;
-            background-position: center;
-            color: #333;
+        :root {
+            /* Vibrant and High-Contrast Color Palette */
+            --primary-color: #6a11cb;        /* Deep Electric Purple */
+            --secondary-color: #d908fe;      /* Vibrant Emerald Green */
+            --accent-color: #2575fc;         /* Vivid Blue */
+            --text-color: #ffffff;           /* Pure White */
+            --background-gradient: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            --glass-background: rgba(46, 204, 113, 0.2);  /* Transparent Soft Green */
+            --glass-border: rgba(106, 17, 203, 0.5);      /* Transparent Purple Border */
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            overscroll-behavior: none;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
         }
 
-        /* Navigation Bar Styles */
-        .navbar {
-            background-color: #007ACC;
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        body, html {
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            background: var(--background-gradient);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+            perspective: 1000px;
         }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .nav-logo {
-            color: white;
-            font-size: 24px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-
-        .nav-links a:hover {
-            background-color: rgba(255,255,255,0.2);
-        }
-
-        /* Image Preview Styles */
-        .image-preview {
-            margin: 20px auto;
-            max-width: 400px;
-            border: 2px solid #007ACC;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: white;
-            display: none;
-        }
-
-        .image-preview img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 3px;
-        }
-
-        .preview-label {
-            font-weight: bold;
-            color: #007ACC;
-            margin-bottom: 10px;
-        }
-
-        .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            margin: 30px auto;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 800px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-        }
-
-        h1 {
-            font-size: 36px;
-            margin-bottom: 10px;
-            color: #222;
-        }
-
-        h2 {
-            font-size: 28px;
-            margin-top: 0;
-            color: #007ACC;
-        }
-
-        canvas {
-            border: 2px solid #333;
-            margin: 20px auto;
-            display: block;
-            background-color: white;
-            border-radius: 5px;
-            touch-action: none;
-        }
-
-        .pen-settings {
+        
+        .app-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            min-height: 30vh;
+            padding: 1rem;
+            position: relative;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.1);
         }
 
-        .pen-settings label {
-            font-size: 16px;
-            margin-right: 10px;
+        /* Background Animation */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
         }
 
-        .pen-settings select,
-        .pen-settings input {
-            padding: 10px;
-            font-size: 16px;
-            margin: 0 10px;
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--glass-background);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1);
+            animation: float-bubbles linear infinite;
+            opacity: 0.7;
         }
 
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin: 10px;
-            background-color: #007ACC;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+        @keyframes float-bubbles {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0.5);
+                opacity: 0.5;
+            }
+            50% {
+                transform: translateY(-50vh) rotate(180deg) scale(1.2);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg) scale(0.7);
+                opacity: 0.6;
+            }
         }
 
-        button:hover {
-            background-color: #005a99;
+        /* Neon Title Animation */
+        @keyframes neon-flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow: 
+                    0 0 10px var(--secondary-color),
+                    0 0 20px var(--primary-color),
+                    0 0 30px var(--accent-color);
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+            }
         }
+
+        .header h1 {
+            font-size: 4rem;
+            text-align: center;
+            color: var(--text-color);
+            text-shadow: 
+                0 0 10px var(--secondary-color),
+                0 0 20px var(--primary-color),
+                0 0 30px var(--accent-color);
+            letter-spacing: 3px;
+            font-weight: 900;
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: neon-flicker 2s infinite alternate;
+        }
+
 
         .action-buttons {
             display: flex;
@@ -157,188 +128,283 @@
             gap: 10px;
         }
 
-        #recognized-text {
-            font-size: 18px;
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #f5f5f5;
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: scale(1.05);
+        }
+
+        .nav-container {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 3rem;
+            position: sticky;
+            top: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(15px);
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        #trackpad {
+            width: 100%; 
+            max-width: 1000px;
+            height: auto; 
+            border: 2px solid var(--accent-color);
+            background-color: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
         }
 
-        audio {
-            margin-top: 20px;
-            width: 100%;
-            max-width: 400px;
+        .pen-settings {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            flex-wrap: wrap;
         }
+
+        #control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+            padding: 10px;
+            flex-wrap: wrap;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            max-width: 1000px;
+            padding: 0 15px;
+        }
+
 
         footer {
+            background: rgba(0, 0, 0, 0.8);
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 2rem;
             margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-            padding: 20px;
         }
 
-        a.download-link {
-            display: block;
-            margin-top: 10px;
-            color: #007ACC;
+        footer a {
+            color: var(--accent-color);
             text-decoration: none;
-            padding: 10px;
-            transition: color 0.3s;
         }
 
-        a.download-link:hover {
-            color: #005a99;
-        }
-
-        /* Mobile-specific styles */
         @media (max-width: 768px) {
-            .container {
-                margin: 10px;
-                padding: 10px;
-            }
-            
-            h1 {
-                font-size: 24px;
-            }
-            
-            h2 {
-                font-size: 20px;
-            }
-            
-            canvas {
-                width: 100%;
-                max-width: 600px;
-                height: 300px;
-            }
-            
-            .pen-settings {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .pen-settings label,
-            .pen-settings select,
-            .pen-settings input {
-                margin: 5px 0;
-                width: 100%;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .action-buttons button {
-                margin: 5px 0;
-                width: 100%;
-            }
-            
-            #control-buttons button {
-                width: 100%;
-                margin: 5px 0;
-            }
-            
-            video {
-                width: 100% !important;
-                height: auto !important;
+            .header h1 {
+                font-size: 2.5rem;
             }
 
             .nav-container {
                 flex-direction: column;
-                gap: 10px;
+                padding: 1rem;
             }
 
             .nav-links {
-                flex-direction: column;
-                gap: 10px;
+                margin-top: 10px;
+            }
+        }
+        .app-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 30vh;
+            padding: 1rem;
+            position: relative;
+        }
+        .download-link {
+        display: inline-block;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 600;
+        margin-top: 1rem;
+        transition: all 0.3s ease;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .download-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+    }
+
+    /* Center audio player and download button */
+    .output-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    .cropper-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .cropper-view-box,
+        .cropper-face {
+            border-radius: 0;
+        }
+
+        /* Mobile camera improvements */
+        @media (max-width: 768px) {
+            #camera-video {
+                width: 100%;
+                max-width: 100%;
+                height: auto;
+            }
+
+            .cropper-container {
+                height: 60vh;
             }
         }
     </style>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet"/>
 </head>
 <body>
+    
+    <!-- Background Animation Container -->
+    <div class="background-animation" id="bubble-container"></div>
+
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="nav-logo">OCR Text to Speech</a>
+            <a href="#" class="nav-logo">OCR Magic</a>
             <div class="nav-links">
                 <a href="#" id="home-link">Home</a>
-                <a href="#" id="contact-link">Contact</a>
+                <a href="mailto:saswatdashai577@gmail.com" id="contact-link">Contact</a>
             </div>
         </div>
     </nav>
 
-    <div class="container">
-        <h1>OCR Text to Speech</h1>
-        <h2>Draw on Trackpad or Upload a File or Take a Picture</h2>
-        
-        <p>Choose an option:</p>
-        <div class="action-buttons">
-            <button id="draw-btn">Draw on Screen</button>
-            <button id="upload-file-btn">Upload an Image File</button>
-            <button id="camera-btn">Capture from Camera</button>
-            
+    <div class="app-container">
+        <div class="glass-card">
+            <div class="header">
+                <h1>OCR Magic</h1>
+                <p style="color: white; text-align: center; margin-top: 1rem;">Transform Text Images to Speech with Cutting-Edge Technology</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <button class="btn" id="draw-btn">Draw on Screen</button>
+                <button class="btn" id="upload-file-btn">Upload Image</button>
+                <button class="btn" id="camera-btn">Capture Photo</button>
+            </div>
         </div>
-
-        <!-- Image Preview Container -->
-        <div class="image-preview" id="image-preview">
-            <div class="preview-label">Selected Image Preview</div>
-            <img id="preview-img" src="" alt="Preview"/>
-        </div>
-
-        <canvas id="trackpad" width="800" height="800" style="display:none;"></canvas>
-
-        <div class="pen-settings" style="display:none;">
-            <label for="pen-thickness">Pen Thickness:</label>
-            <input type="number" id="pen-thickness" value="5" min="1" max="20" />
-            
-            <label for="pen-type">Pen Type:</label>
-            <select id="pen-type">
-                <option value="round">Round</option>
-                <option value="square">Square</option>
-            </select>
-            
-            <label for="eraser-type">Eraser:</label>
-            <select id="eraser-type">
-                <option value="selected">Clear Selected Area</option>
-                <option value="all">Clear All</option>
-            </select>
-        </div>
-
-        <input type="file" id="file-input" accept="image/png, image/jpeg" style="display:none;"/>
-
-        <div id="control-buttons" style="display:none;">
-            <button id="pen-btn">Pen</button>
-            <button id="eraser-btn">Eraser</button>
-            <button id="clear-btn">Clear</button>
-            <button id="upload-drawing-btn">Upload Drawing</button>
-            <button id="save-drawing-btn">Save Drawing</button>
-        </div>
-
-        <video id="camera-video" width="400" height="300" autoplay playsinline style="display:none;"></video>
-        <button id="capture-btn" style="display:none;">Capture Photo</button>
-        <img id="captured-image" style="display:none; max-width: 100%;"/>
-        <button id="crop-btn" style="display:none;">Crop & Upload</button>
-        <button id="upload-cropped-btn" style="display:none;">Upload Cropped Image</button>
-        <button id="clear-capture-btn" style="display:none;">Clear Captured Image</button>
-
-        <p id="recognized-text"></p>
-        <audio id="audio-player" controls style="display:none;"></audio>
-        <a id="download-link" class="download-link" href="#" download style="display:none;">Download Audio</a>
-
-        <footer>
-            <p>© Saswata Kumar Dash 2024</p>
-            <p><strong>Note:</strong> The backend is available from <strong>11:00 AM to 11:00 PM</strong> daily.</p>
-            <p>If you need the website to be available at a specific time, please contact us at <strong><a href="mailto:saswatdashai577@gmail.com">saswatdashai577@gmail.com</a></strong>.</p>
-        </footer>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <!-- Canvas Container -->
+    <div class="canvas-container">
+        <canvas id="trackpad" width="800" height="800" style="display:none;"></canvas>
+    </div>
 
+    <!-- Pen Settings -->
+    <div class="pen-settings" style="display:none;">
+        <label for="pen-thickness">Pen Thickness:</label>
+        <input type="number" id="pen-thickness" value="5" min="1" max="20" />
+        
+        <label for="pen-type">Pen Type:</label>
+        <select id="pen-type">
+            <option value="round">Round</option>
+            <option value="square">Square</option>
+        </select>
+        
+        <label for="eraser-type">Eraser:</label>
+        <select id="eraser-type">
+            <option value="selected">Clear Selected Area</option>
+            <option value="all">Clear All</option>
+        </select>
+    </div>
+
+    <!-- Control Buttons -->
+    <div id="control-buttons" style="display:none;">
+        <button id="pen-btn">Pen</button>
+        <button id="eraser-btn">Eraser</button>
+        <button id="clear-btn">Clear</button>
+        <button id="upload-drawing-btn">Upload Drawing</button>
+        <button id="save-drawing-btn">Save Drawing</button>
+    </div>
+
+    <input type="file" id="file-input" accept="image/png, image/jpeg" style="display:none;"/>
+
+    <!-- Camera Elements -->
+    <video id="camera-video" width="400" height="300" autoplay playsinline style="display:none;"></video>
+    <button id="capture-btn" style="display:none;">Capture Photo</button>
+    <img id="captured-image" style="display:none; max-width: 100%;"/>
+    <button id="crop-btn" style="display:none;">Crop & Upload</button>
+    <button id="upload-cropped-btn" style="display:none;">Upload Cropped Image</button>
+    <button id="clear-capture-btn" style="display:none;">Clear Captured Image</button>
+
+    <div class="output-container">
+        <p id="recognized-text"></p>
+        <audio id="audio-player" controls style="display:none;"></audio>
+        <a id="download-link" class="download-link" href="#" download style="display:none;">
+            Download Audio File
+        </a>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <p>© Saswata Kumar Dash 2024</p>
+        <p><strong>Note:</strong> The backend is available from <strong>11:00 AM to 11:00 PM</strong> daily.</p>
+        <p>If you need the website to be available at a specific time, please contact us at <strong><a href="mailto:saswatdashai577@gmail.com">saswatdashai577@gmail.com</a></strong>.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
     <script>
         const ngrokUrl = 'https://8071-115-99-56-158.ngrok-free.app';
-        const canvas = document.getElementById('trackpad');
-        const ctx = canvas.getContext('2d');
+     const canvas = document.getElementById('trackpad');
+     const ctx = canvas.getContext('2d');
         const penThicknessInput = document.getElementById('pen-thickness');
         const penTypeSelect = document.getElementById('pen-type');
         const eraserTypeSelect = document.getElementById('eraser-type');
@@ -346,7 +412,50 @@
         let isErasing = false;
         let lastX, lastY;
         let cropper;
-
+        
+        function createBubbles() {
+    const animation = document.querySelector('.background-animation');
+    const bubbleCount = 50; // Reduced number of bubbles
+    
+    for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.classList.add('bubble');
+        
+        // Larger bubbles
+        const size = Math.random() * 150 + 50; // Size between 50px and 200px
+        bubble.style.width = `${size}px`;
+        bubble.style.height = bubble.style.width;
+        bubble.style.left = `${Math.random() * 100}%`;
+        bubble.style.animationDuration = `${Math.random() * 20 + 15}s`; // Duration between 15-35s
+        bubble.style.animationDelay = `${Math.random() * 10}s`;
+        
+        animation.appendChild(bubble);
+    }
+}
+        // Call on page load
+        window.addEventListener('load', createBubbles);
+            function toggleSection(targetSection) {
+                // Hide all sections
+                sections.forEach(section => {
+                    section.classList.remove('active');
+                    section.style.display = 'none';
+                });
+        
+                // Reset button styles
+                buttons.forEach(btn => {
+                    btn.style.backgroundColor = 'var(--primary-color)';
+                });
+        
+                // Show target section
+                targetSection.classList.add('active');
+                targetSection.style.display = 'block';
+        
+                // Highlight active button
+                const activeButton = buttons[sections.indexOf(targetSection)];
+                activeButton.style.backgroundColor = 'var(--accent-color)';
+            }
+        
+           
         // Navigation handling
         document.getElementById('home-link').addEventListener('click', (e) => {
             e.preventDefault();
@@ -422,35 +531,46 @@
 
         // Mouse event handlers
         function handleMouseDown(e) {
-            drawing = true;
-            const rect = canvas.getBoundingClientRect();
-            lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
-            lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
+    drawing = true;
+    const rect = canvas.getBoundingClientRect();
+    lastX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    lastY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-            if (isErasing && eraserTypeSelect.value === 'selected') {
-                ctx.clearRect(lastX - ctx.lineWidth, lastY - ctx.lineWidth, 
-                            ctx.lineWidth * 2, ctx.lineWidth * 2);
-            } else {
-                ctx.beginPath();
-                ctx.moveTo(lastX, lastY);
-            }
-        }
+    if (isErasing && eraserTypeSelect.value === 'selected') {
+        // Save the current fill style
+        const originalFillStyle = ctx.fillStyle;
+        // Set fill style to white for erasing
+        ctx.fillStyle = 'white';
+        ctx.fillRect(lastX - ctx.lineWidth, lastY - ctx.lineWidth, 
+                    ctx.lineWidth * 2, ctx.lineWidth * 2);
+        // Restore the original fill style
+        ctx.fillStyle = originalFillStyle;
+    } else {
+        ctx.beginPath();
+        ctx.moveTo(lastX, lastY);
+    }
+}
 
-        function handleMouseMove(e) {
-            if (!drawing) return;
-            const rect = canvas.getBoundingClientRect();
-            const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
-            const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
+function handleMouseMove(e) {
+    if (!drawing) return;
+    const rect = canvas.getBoundingClientRect();
+    const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
+    const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
 
-            if (isErasing && eraserTypeSelect.value === 'selected') {
-                ctx.clearRect(currentX - ctx.lineWidth, currentY - ctx.lineWidth, 
-                            ctx.lineWidth * 2, ctx.lineWidth * 2);
-            } else {
-                ctx.lineTo(currentX, currentY);
-                ctx.stroke();
-            }
-        }
-
+    if (isErasing && eraserTypeSelect.value === 'selected') {
+        // Save the current fill style
+        const originalFillStyle = ctx.fillStyle;
+        // Set fill style to white for erasing
+        ctx.fillStyle = 'white';
+        ctx.fillRect(currentX - ctx.lineWidth, currentY - ctx.lineWidth, 
+                    ctx.lineWidth * 2, ctx.lineWidth * 2);
+        // Restore the original fill style
+        ctx.fillStyle = originalFillStyle;
+    } else {
+        ctx.lineTo(currentX, currentY);
+        ctx.stroke();
+    }
+}
         function handleMouseUp() {
             drawing = false;
         }
@@ -697,13 +817,17 @@
             }
 
             cropper = new Cropper(capturedImage, {
-                aspectRatio: 1,
-                viewMode: 1,
-                ready: function() {
-                    // Show upload button when cropper is ready
-                    document.getElementById('upload-cropped-btn').style.display = 'block';
-                }
-            });
+    aspectRatio: NaN, // Allows free-form cropping
+    viewMode: 1,
+    guides: true,
+    background: false,
+    autoCropArea: 0.8,
+    movable: true,
+    zoomable: true,
+    ready: function() {
+        document.getElementById('upload-cropped-btn').style.display = 'block';
+    }
+});
         });
 
         document.getElementById('clear-capture-btn').addEventListener('click', () => {
@@ -781,6 +905,7 @@
 
         // Initialize the canvas
         initCanvas();
+        
     </script>
 </body>
 </html>
